@@ -11,7 +11,7 @@ resource "apstra_datacenter_blueprint" "terraform-pod1" {
 
 
 data "apstra_asn_pool" "details" {
-  name       = "Terraform-ASN"
+  name       = var.asn_pool.name
   
   depends_on = [
     apstra_asn_pool.terraform-asn,
@@ -19,7 +19,7 @@ data "apstra_asn_pool" "details" {
 }
 
 data "apstra_ipv4_pool" "lb" {
-  name       = "Terraform-Loopback"
+  name       = var.loopback_pool.name
   
     depends_on = [
     apstra_ipv4_pool.terraform-lb,
@@ -27,7 +27,7 @@ data "apstra_ipv4_pool" "lb" {
 }
 
 data "apstra_ipv4_pool" "link" {
-  name       = "Terraform-Link"
+  name       = var.link_pool.name
   
   depends_on = [
     apstra_ipv4_pool.terraform-link,
@@ -48,27 +48,27 @@ locals {
   }
   switches = {
     spine1 = {
-      device_key       = "WH0216290096"
+      device_key       = var.device_keys["spine1"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
     spine2 = {
-      device_key       = "WH0217430051"
+      device_key       = var.device_keys["spine2"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
     terraform_border_001_leaf1 = {
-      device_key       = "DA722"
+      device_key       = var.device_keys["terraform_border_001_leaf1"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
     terraform_border_001_leaf2 = {
-      device_key       = "DL440"
+      device_key       = var.device_keys["terraform_border_001_leaf2"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
     terraform_compute_001_leaf1 = {
-      device_key       = "XH3722180714"
+      device_key       = var.device_keys["terraform_compute_001_leaf1"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
     terraform_compute_001_leaf2 = {
-      device_key       = "XH3722180698"
+      device_key       = var.device_keys["terraform_compute_001_leaf2"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
   }
@@ -85,7 +85,7 @@ resource "apstra_datacenter_device_allocation" "assign_devices" {
 
   # Obligatoire pour pouvoir déployer
   system_attributes = {
-    deploy_mode = "deploy"
+    deploy_mode = "undeploy"
   }
 
   device_key = each.value.device_key

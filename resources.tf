@@ -1,35 +1,53 @@
-## Create an IPv4 resource pools for loopbacks and links
-resource "apstra_ipv4_pool" "terraform-lb"{
-  name = "Terraform-Loopback"
-  subnets = [
-    { network = "10.0.0.0/24" },
-  ]
+variable "loopback_pool" {
+  type = object({
+    name    = string
+    network = string
+  })
 }
 
-resource "apstra_ipv4_pool" "terraform-link"{
-  name = "Terraform-Link"
-  subnets = [
-    { network = "10.1.0.0/24" },
-  ]
+variable "link_pool" {
+  type = object({
+    name    = string
+    network = string
+  })
 }
 
-# Create an ASN resource pool according to the instructions in the lab guide.
-resource "apstra_asn_pool" "terraform-asn"{
-  name = "Terraform-ASN"
-  ranges = [
-    {
-      first = 65100
-      last  = 65199
-    }
-  ]
+variable "asn_pool" {
+  type = object({
+    name  = string
+    first = number
+    last  = number
+  })
+}
+
+variable "vni_pool" {
+  type = object({
+    name  = string
+    first = number
+    last  = number
+  })
+}
+
+variable "device_keys" {
+  type = map(string)
+}
+
+resource "apstra_ipv4_pool" "terraform-lb" {
+  name    = var.loopback_pool.name
+  subnets = [{ network = var.loopback_pool.network }]
+}
+
+resource "apstra_ipv4_pool" "terraform-link" {
+  name    = var.link_pool.name
+  subnets = [{ network = var.link_pool.network }]
+}
+
+resource "apstra_asn_pool" "terraform-asn" {
+  name   = var.asn_pool.name
+  ranges = [{ first = var.asn_pool.first, last = var.asn_pool.last }]
 }
 
 resource "apstra_vni_pool" "terraform-vni" {
-  name = "Terraform-vni"
-  ranges = [
-  {
-    first = 10000
-    last  = 19999
-  }
-  ]
+  name   = var.vni_pool.name
+  ranges = [{ first = var.vni_pool.first, last = var.vni_pool.last }]
 }

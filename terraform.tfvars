@@ -1,3 +1,20 @@
+device_keys = {
+  spine1                      = "WH0216290096"
+  spine2                      = "WH0217430051"
+  terraform_border_001_leaf1  = "DA722"
+  terraform_border_001_leaf2  = "DL440"
+  terraform_compute_001_leaf1 = "XH3722180714"
+  terraform_compute_001_leaf2 = "XH3722180698"
+}
+
+loopback_pool = { name = "Terraform-Loopback", network = "10.0.0.0/24" }
+
+link_pool = { name = "Terraform-Link", network = "10.1.0.0/24" }
+
+asn_pool = { name = "Terraform-ASN", first = 65100, last = 65199 }
+
+vni_pool = { name = "Terraform-vni", first = 10000, last = 19999 }
+
 vrfs = [
   {
     name                   = "Blue_VRF"

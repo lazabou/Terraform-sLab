@@ -7,3 +7,4 @@ terraform.secrets.tfvars
 .terraform/
 .terraform.lock.hcl
 crash.log
+.DS_Store
