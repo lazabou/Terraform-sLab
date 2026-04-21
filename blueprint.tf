@@ -80,17 +80,17 @@ resource "apstra_datacenter_device_allocation" "assign_devices" {
   blueprint_id     = apstra_datacenter_blueprint.terraform-pod1.id
   node_name        = each.key
 
-  # On associe l’interface map à ce nœud
+  # Assign the interface map to this node
   initial_interface_map_id = each.value.interface_map_id
 
-  # Obligatoire pour pouvoir déployer
+  # Required to enable deployment
   system_attributes = {
     deploy_mode = "undeploy"
   }
 
   device_key = each.value.device_key
 
-  # ⭐ Dépendances importantes : les LD & interface maps doivent exister AVANT assignation
+  # Logical devices and interface maps must exist before device assignment
   depends_on = [
     apstra_logical_device.ld,
     apstra_interface_map.im,
@@ -126,21 +126,21 @@ resource "apstra_blueprint_deployment" "deploy" {
     apstra_datacenter_virtual_network.vns,
     apstra_datacenter_resource_pool_allocation.vn-vni,
 
-    # Generic systems et leurs assignements
+    # Generic systems and their CT assignments
     apstra_datacenter_generic_system.systems,
     apstra_datacenter_connectivity_templates_assignment.gs_assign,
 
-    # CT par VN
+    # Connectivity templates per virtual network
     apstra_datacenter_connectivity_template_interface.vn_ct,
 
-    # Routes par défaut
+    # Default routes
     apstra_datacenter_connectivity_template_system.ct_default_route,
   #  apstra_datacenter_connectivity_templates_assignment.assign_default_route,
     apstra_datacenter_connectivity_template_assignments.assign_default_route,
 
-    # 🆕 Ajout important : assignation des devices dans le blueprint
+    # Device allocation must be complete before deployment
     apstra_datacenter_device_allocation.assign_devices
   ]
 
-  comment = "Déployé par Terraform {{.TerraformVersion}}, provider Apstra {{.ProviderVersion}}, utilisateur $USER."
+  comment = "Deployed by Terraform {{.TerraformVersion}}, Apstra provider {{.ProviderVersion}}, user $USER."
 }

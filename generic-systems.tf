@@ -1,5 +1,5 @@
 ############################
-#  Variable d'entrée GS   #
+#  Generic Systems variable #
 ############################
 
 variable "generic_systems" {
@@ -16,23 +16,23 @@ variable "generic_systems" {
       lag_mode                      = string
     }))
 
-    # Noms des VN sur lesquels ce GS doit être branché
+    # VN names this generic system should be connected to
     vns = list(string)
   }))
 }
 
 ############################
-#        Locals           #
+#          Locals          #
 ############################
 
 locals {
-  # Map pratique: nom -> objet GS (clé = "FW", etc.)
+  # Name-keyed map for easy GS lookup
   gs_by_name = {
     for gs in var.generic_systems :
     gs.name => gs
   }
 
-  # Tous les labels de leaf utilisés par les GS
+  # All leaf labels referenced by generic systems
   gs_leaf_labels = toset(flatten([
     for gs in var.generic_systems : [
       for l in gs.links : l.leaf_label
@@ -41,7 +41,7 @@ locals {
 }
 
 ############################
-#   Leafs cibles des GS    #
+#  Target leaf switches    #
 ############################
 
 data "apstra_datacenter_systems" "gs_leaves" {
@@ -49,12 +49,12 @@ data "apstra_datacenter_systems" "gs_leaves" {
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
   filters = [{
-    label = each.key   # ex: "terraform_border_001_leaf1"
+    label = each.key   # e.g. "terraform_border_001_leaf1"
   }]
 }
 
 ############################
-#   Generic Systems        #
+#     Generic Systems      #
 ############################
 
 resource "apstra_datacenter_generic_system" "systems" {
@@ -83,11 +83,11 @@ resource "apstra_datacenter_generic_system" "systems" {
 }
 
 ############################
-#  Interfaces des GS (AP)  #
+#  GS interfaces (APs)     #
 ############################
 
 data "apstra_datacenter_interfaces_by_link_tag" "gs" {
-  # On réutilise la même map que pour les GS, pour garder les mêmes clés
+  # Reuse the same map as for GS resources to keep consistent keys
   for_each     = local.gs_by_name
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
@@ -99,19 +99,19 @@ data "apstra_datacenter_interfaces_by_link_tag" "gs" {
 }
 
 ############################
-#  Assignation des CT VN   #
+#  Assign VN CTs to GS     #
 ############################
 
 resource "apstra_datacenter_connectivity_templates_assignment" "gs_assign" {
   for_each     = local.gs_by_name
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
-  # Application point = interface(s) du GS trouvées via les tags
+  # Application point: GS interface(s) found by link tags
   application_point_id = one(
     data.apstra_datacenter_interfaces_by_link_tag.gs[each.key].ids
   )
 
-  # Tous les CT (un par VN) pour ce GS
+  # All CTs (one per VN) for this generic system
   connectivity_template_ids = [
     for vn_name in each.value.vns :
     apstra_datacenter_connectivity_template_interface.vn_ct[vn_name].id

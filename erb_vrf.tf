@@ -1,5 +1,5 @@
 ########################
-#       VRFs           #
+#         VRFs         #
 ########################
 
 variable "vrfs" {
@@ -34,7 +34,7 @@ resource "apstra_datacenter_resource_pool_allocation" "vrf_loopbacks" {
 resource "apstra_datacenter_connectivity_template_system" "ct_default_route" {
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
   name         = "Default_route"
-  description  = "Routes par défaut pour toutes les VRFs"
+  description  = "Default routes for all VRFs"
 
   custom_static_routes = {
     for vrf in var.vrfs :
@@ -47,11 +47,11 @@ resource "apstra_datacenter_connectivity_template_system" "ct_default_route" {
 }
 
 ########################
-#  Leaf systems ciblés par la default route  #
+#  Default route leafs #
 ########################
 
 data "apstra_datacenter_systems" "default_route_leafs" {
-  # un data par leaf_label utilisé dans au moins une VRF
+  # One data source per leaf label used in at least one VRF
   for_each     = toset(flatten([for vrf in var.vrfs : vrf.default_route_leaf]))
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
@@ -62,13 +62,13 @@ data "apstra_datacenter_systems" "default_route_leafs" {
 
 
 ########################
-#  Assignation du CT   #
+#  Assign default CT   #
 ########################
 
 resource "apstra_datacenter_connectivity_template_assignments" "assign_default_route" {
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
-  # Tous les leafs utilisés par au moins une VRF
+  # All leaf switches used by at least one VRF
   application_point_ids = [
     for _, sys in data.apstra_datacenter_systems.default_route_leafs :
     one(sys.ids)

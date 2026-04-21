@@ -59,7 +59,7 @@ resource "apstra_datacenter_virtual_network" "vns" {
   bindings = data.apstra_datacenter_virtual_network_binding_constructor.vn_bindings[each.key].bindings
 }
 
-#creation automatique du CT tagged pour chaque VN
+# Auto-create a tagged connectivity template for each virtual network
 
 resource "apstra_datacenter_connectivity_template_interface" "vn_ct" {
   for_each     = apstra_datacenter_virtual_network.vns

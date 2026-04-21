@@ -3,10 +3,10 @@
 #############################
 
 locals {
-  # Rôles communs à tous les ports
+  # Port roles shared across all port groups
   ld_port_roles = ["superspine", "spine", "leaf", "peer", "access", "generic"]
 
-  # Définition des logical devices : leaf, border, spine
+  # Logical device definitions: leaf, border, spine
   logical_devices = {
     leaf = {
       name    = "terraform_leaf"
@@ -35,7 +35,7 @@ locals {
     }
   }
 
-  # Ranges de mapping logiques → physiques pour chaque type
+  # Logical-to-physical interface mapping ranges per device type
   interface_map_ranges = {
     leaf = [
       {
@@ -75,7 +75,7 @@ locals {
     ]
   }
 
-  # Infos des interface_maps (nom + device profile)
+  # Interface map definitions (name and device profile)
   interface_maps = {
     leaf = {
       name           = "im_leaf"
@@ -91,7 +91,7 @@ locals {
     }
   }
 
-  # Calcul des interfaces à partir des ranges
+  # Build the flat interface list from the mapping ranges
   interfaces = {
     for k, ranges in local.interface_map_ranges :
     k => flatten([
