@@ -47,33 +47,33 @@ locals {
     spine_leaf_link_ips = [data.apstra_ipv4_pool.link.id]
   }
   switches = {
-    spine1 = {
-      node_name        = "spine1"
-      device_key       = var.device_keys["spine1"]
+    Spine1 = {
+      node_name        = var.nodes["Spine1"].apstra_name
+      device_key       = var.device_keys["Spine1"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
-    spine2 = {
-      node_name        = "spine2"
-      device_key       = var.device_keys["spine2"]
+    Spine2 = {
+      node_name        = var.nodes["Spine2"].apstra_name
+      device_key       = var.device_keys["Spine2"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
     Border1 = {
-      node_name        = var.node_names["Border1"]
+      node_name        = var.nodes["Border1"].apstra_name
       device_key       = var.device_keys["Border1"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
     Border2 = {
-      node_name        = var.node_names["Border2"]
+      node_name        = var.nodes["Border2"].apstra_name
       device_key       = var.device_keys["Border2"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
     Leaf1 = {
-      node_name        = var.node_names["Leaf1"]
+      node_name        = var.nodes["Leaf1"].apstra_name
       device_key       = var.device_keys["Leaf1"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
     Leaf2 = {
-      node_name        = var.node_names["Leaf2"]
+      node_name        = var.nodes["Leaf2"].apstra_name
       device_key       = var.device_keys["Leaf2"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
@@ -92,8 +92,8 @@ resource "apstra_datacenter_device_allocation" "assign_devices" {
   # Required to enable deployment
   system_attributes = {
     deploy_mode = "undeploy"
-    name        = each.key
-    hostname    = each.key
+    name        = var.nodes[each.key].label
+    hostname    = var.nodes[each.key].hostname
   }
 
   device_key = each.value.device_key

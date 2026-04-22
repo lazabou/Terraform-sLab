@@ -32,9 +32,13 @@ variable "device_keys" {
   type = map(string)
 }
 
-variable "node_names" {
-  description = "Maps friendly node names to Apstra-generated node names"
-  type        = map(string)
+variable "nodes" {
+  description = "Node definitions: Apstra internal name, UI label, and hostname"
+  type = map(object({
+    apstra_name = string
+    label       = string
+    hostname    = string
+  }))
 }
 
 resource "apstra_ipv4_pool" "terraform-lb" {

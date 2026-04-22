@@ -1,13 +1,15 @@
-node_names = {
-  Border1 = "terraform_border_001_leaf1"
-  Border2 = "terraform_border_001_leaf2"
-  Leaf1   = "terraform_compute_001_leaf1"
-  Leaf2   = "terraform_compute_001_leaf2"
+nodes = {
+  Spine1  = { apstra_name = "spine1",                      label = "Spine1",  hostname = "Spine1"  }
+  Spine2  = { apstra_name = "spine2",                      label = "Spine2",  hostname = "Spine2"  }
+  Border1 = { apstra_name = "terraform_border_001_leaf1",  label = "Border1", hostname = "Border1" }
+  Border2 = { apstra_name = "terraform_border_001_leaf2",  label = "Border2", hostname = "Border2" }
+  Leaf1   = { apstra_name = "terraform_compute_001_leaf1", label = "Leaf1",   hostname = "Leaf1"   }
+  Leaf2   = { apstra_name = "terraform_compute_001_leaf2", label = "Leaf2",   hostname = "Leaf2"   }
 }
 
 device_keys = {
-  spine1  = "WH0216290096"
-  spine2  = "WH0217430051"
+  Spine1  = "WH0216290096"
+  Spine2  = "WH0217430051"
   Border1 = "DA722"
   Border2 = "DL440"
   Leaf1   = "XH3722180714"
