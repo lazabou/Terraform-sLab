@@ -56,7 +56,7 @@ data "apstra_datacenter_systems" "default_route_leafs" {
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
   filters = [{
-    label = local.apstra_node_names[each.key]
+    label = each.key
   }]
 }
 
