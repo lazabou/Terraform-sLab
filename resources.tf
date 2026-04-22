@@ -32,6 +32,11 @@ variable "device_keys" {
   type = map(string)
 }
 
+variable "node_names" {
+  description = "Maps friendly node names to Apstra-generated node names"
+  type        = map(string)
+}
+
 resource "apstra_ipv4_pool" "terraform-lb" {
   name    = var.loopback_pool.name
   subnets = [{ network = var.loopback_pool.network }]

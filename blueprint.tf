@@ -48,27 +48,33 @@ locals {
   }
   switches = {
     spine1 = {
+      node_name        = "spine1"
       device_key       = var.device_keys["spine1"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
     spine2 = {
+      node_name        = "spine2"
       device_key       = var.device_keys["spine2"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
-    terraform_border_001_leaf1 = {
-      device_key       = var.device_keys["terraform_border_001_leaf1"]
+    Border1 = {
+      node_name        = var.node_names["Border1"]
+      device_key       = var.device_keys["Border1"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
-    terraform_border_001_leaf2 = {
-      device_key       = var.device_keys["terraform_border_001_leaf2"]
+    Border2 = {
+      node_name        = var.node_names["Border2"]
+      device_key       = var.device_keys["Border2"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
-    terraform_compute_001_leaf1 = {
-      device_key       = var.device_keys["terraform_compute_001_leaf1"]
+    Leaf1 = {
+      node_name        = var.node_names["Leaf1"]
+      device_key       = var.device_keys["Leaf1"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
-    terraform_compute_001_leaf2 = {
-      device_key       = var.device_keys["terraform_compute_001_leaf2"]
+    Leaf2 = {
+      node_name        = var.node_names["Leaf2"]
+      device_key       = var.device_keys["Leaf2"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
   }
@@ -78,7 +84,7 @@ locals {
 resource "apstra_datacenter_device_allocation" "assign_devices" {
   for_each         = local.switches
   blueprint_id     = apstra_datacenter_blueprint.terraform-pod1.id
-  node_name        = each.key
+  node_name        = each.value.node_name
 
   # Assign the interface map to this node
   initial_interface_map_id = each.value.interface_map_id

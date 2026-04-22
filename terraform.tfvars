@@ -1,10 +1,17 @@
+node_names = {
+  Border1 = "terraform_border_001_leaf1"
+  Border2 = "terraform_border_001_leaf2"
+  Leaf1   = "terraform_compute_001_leaf1"
+  Leaf2   = "terraform_compute_001_leaf2"
+}
+
 device_keys = {
-  spine1                      = "WH0216290096"
-  spine2                      = "WH0217430051"
-  terraform_border_001_leaf1  = "DA722"
-  terraform_border_001_leaf2  = "DL440"
-  terraform_compute_001_leaf1 = "XH3722180714"
-  terraform_compute_001_leaf2 = "XH3722180698"
+  spine1  = "WH0216290096"
+  spine2  = "WH0217430051"
+  Border1 = "DA722"
+  Border2 = "DL440"
+  Leaf1   = "XH3722180714"
+  Leaf2   = "XH3722180698"
 }
 
 loopback_pool = { name = "Terraform-Loopback", network = "10.0.0.0/24" }
@@ -19,12 +26,12 @@ vrfs = [
   {
     name                   = "Blue_VRF"
     default_route_next_hop = "10.0.10.254"
-    default_route_leaf     = ["terraform_border_001_leaf1", "terraform_border_001_leaf2"]
+    default_route_leaf     = ["Border1", "Border2"]
   },
   {
     name                   = "Red_VRF"
     default_route_next_hop = "10.0.20.254"
-    default_route_leaf     = ["terraform_border_001_leaf1", "terraform_border_001_leaf2"]
+    default_route_leaf     = ["Border1", "Border2"]
   },
 ]
 
@@ -35,7 +42,7 @@ vns = [
     vrf_name             = "Blue_VRF"
     ipv4_virtual_gateway = "10.0.100.1"
     ipv4_subnet          = "10.0.100.0/24"
-    bindings             = ["terraform_compute_001_leaf1"]
+    bindings             = ["Leaf1"]
   },
   {
     name                 = "Vlan-200"
@@ -43,7 +50,7 @@ vns = [
     vrf_name             = "Red_VRF"
     ipv4_virtual_gateway = "10.0.200.1"
     ipv4_subnet          = "10.0.200.0/24"
-    bindings             = ["terraform_compute_001_leaf1"]
+    bindings             = ["Leaf1"]
   },
   {
     name                 = "Vlan-10"
@@ -51,7 +58,7 @@ vns = [
     vrf_name             = "Blue_VRF"
     ipv4_virtual_gateway = "10.0.10.1"
     ipv4_subnet          = "10.0.10.0/24"
-    bindings             = ["terraform_border_001_leaf1"]
+    bindings             = ["Border1"]
   },
   {
     name                 = "Vlan-20"
@@ -59,7 +66,7 @@ vns = [
     vrf_name             = "Red_VRF"
     ipv4_virtual_gateway = "10.0.20.1"
     ipv4_subnet          = "10.0.20.0/24"
-    bindings             = ["terraform_border_001_leaf1"]
+    bindings             = ["Border1"]
   },
 ]
 
@@ -70,14 +77,14 @@ generic_systems = [
     link_tags = ["server14"]
     links = [
       {
-        leaf_label                    = "terraform_compute_001_leaf1"
+        leaf_label                    = "Leaf1"
         target_switch_if_name         = "xe-0/0/1"
         target_switch_if_transform_id = 2
         group_label                   = "bond0"
         lag_mode                      = "lacp_active"
       },
       {
-        leaf_label                    = "terraform_compute_001_leaf2"
+        leaf_label                    = "Leaf2"
         target_switch_if_name         = "xe-0/0/1"
         target_switch_if_transform_id = 2
         group_label                   = "bond0"
@@ -92,14 +99,14 @@ generic_systems = [
     link_tags = ["server10"]
     links = [
       {
-        leaf_label                    = "terraform_compute_001_leaf1"
+        leaf_label                    = "Leaf1"
         target_switch_if_name         = "xe-0/0/2"
         target_switch_if_transform_id = 2
         group_label                   = "bond0"
         lag_mode                      = "lacp_active"
       },
       {
-        leaf_label                    = "terraform_compute_001_leaf2"
+        leaf_label                    = "Leaf2"
         target_switch_if_name         = "xe-0/0/2"
         target_switch_if_transform_id = 2
         group_label                   = "bond0"
@@ -114,14 +121,14 @@ generic_systems = [
     link_tags = ["FW"]
     links = [
       {
-        leaf_label                    = "terraform_border_001_leaf1"
+        leaf_label                    = "Border1"
         target_switch_if_name         = "et-0/0/24"
         target_switch_if_transform_id = 1
         group_label                   = "bond0"
         lag_mode                      = "lacp_active"
       },
       {
-        leaf_label                    = "terraform_border_001_leaf2"
+        leaf_label                    = "Border2"
         target_switch_if_name         = "et-0/0/24"
         target_switch_if_transform_id = 1
         group_label                   = "bond0"

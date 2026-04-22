@@ -27,7 +27,7 @@ data "apstra_datacenter_systems" "leaves" {
   blueprint_id = apstra_datacenter_blueprint.terraform-pod1.id
 
   filters = [{
-    label    = each.key   # ex: "terraform_compute_001_leaf1-label"
+    label = var.node_names[each.key]
   }]
 }
 
