@@ -37,6 +37,16 @@ data "apstra_ipv4_pool" "link" {
 
 
 locals {
+  # Apstra node names derived from rack type names — no need to hardcode them in tfvars
+  apstra_node_names = {
+    Spine1  = "spine1"
+    Spine2  = "spine2"
+    Border1 = "${replace(apstra_rack_type.terraform-border.name, "-", "_")}_001_leaf1"
+    Border2 = "${replace(apstra_rack_type.terraform-border.name, "-", "_")}_001_leaf2"
+    Leaf1   = "${replace(apstra_rack_type.terraform-compute.name, "-", "_")}_001_leaf1"
+    Leaf2   = "${replace(apstra_rack_type.terraform-compute.name, "-", "_")}_001_leaf2"
+  }
+
   asn_pools = {
     spine_asns = [data.apstra_asn_pool.details.id]
     leaf_asns  = [data.apstra_asn_pool.details.id]
@@ -48,32 +58,32 @@ locals {
   }
   switches = {
     Spine1 = {
-      node_name        = var.nodes["Spine1"].apstra_name
+      node_name        = local.apstra_node_names["Spine1"]
       device_key       = var.device_keys["Spine1"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
     Spine2 = {
-      node_name        = var.nodes["Spine2"].apstra_name
+      node_name        = local.apstra_node_names["Spine2"]
       device_key       = var.device_keys["Spine2"]
       interface_map_id = apstra_interface_map.im["spine"].id
     }
     Border1 = {
-      node_name        = var.nodes["Border1"].apstra_name
+      node_name        = local.apstra_node_names["Border1"]
       device_key       = var.device_keys["Border1"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
     Border2 = {
-      node_name        = var.nodes["Border2"].apstra_name
+      node_name        = local.apstra_node_names["Border2"]
       device_key       = var.device_keys["Border2"]
       interface_map_id = apstra_interface_map.im["border"].id
     }
     Leaf1 = {
-      node_name        = var.nodes["Leaf1"].apstra_name
+      node_name        = local.apstra_node_names["Leaf1"]
       device_key       = var.device_keys["Leaf1"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }
     Leaf2 = {
-      node_name        = var.nodes["Leaf2"].apstra_name
+      node_name        = local.apstra_node_names["Leaf2"]
       device_key       = var.device_keys["Leaf2"]
       interface_map_id = apstra_interface_map.im["leaf"].id
     }

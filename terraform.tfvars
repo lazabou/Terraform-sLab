@@ -1,12 +1,12 @@
 blueprint_name = "Terraform-pod1"
 
 nodes = {
-  Spine1  = { apstra_name = "spine1",                      label = "Spine1",  hostname = "Spine1"  }
-  Spine2  = { apstra_name = "spine2",                      label = "Spine2",  hostname = "Spine2"  }
-  Border1 = { apstra_name = "terraform_border_001_leaf1",  label = "Border1", hostname = "Border1" }
-  Border2 = { apstra_name = "terraform_border_001_leaf2",  label = "Border2", hostname = "Border2" }
-  Leaf1   = { apstra_name = "terraform_compute_001_leaf1", label = "Leaf1",   hostname = "Leaf1"   }
-  Leaf2   = { apstra_name = "terraform_compute_001_leaf2", label = "Leaf2",   hostname = "Leaf2"   }
+  Spine1  = { label = "Spine1",  hostname = "Spine1"  }
+  Spine2  = { label = "Spine2",  hostname = "Spine2"  }
+  Border1 = { label = "Border1", hostname = "Border1" }
+  Border2 = { label = "Border2", hostname = "Border2" }
+  Leaf1   = { label = "Leaf1",   hostname = "Leaf1"   }
+  Leaf2   = { label = "Leaf2",   hostname = "Leaf2"   }
 }
 
 device_keys = {

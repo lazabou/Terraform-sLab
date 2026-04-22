@@ -37,11 +37,10 @@ variable "blueprint_name" {
 }
 
 variable "nodes" {
-  description = "Node definitions: Apstra internal name, UI label, and hostname"
+  description = "Node definitions: UI label and hostname"
   type = map(object({
-    apstra_name = string
-    label       = string
-    hostname    = string
+    label    = string
+    hostname = string
   }))
 }
 
