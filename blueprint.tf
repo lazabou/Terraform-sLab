@@ -101,7 +101,7 @@ resource "apstra_datacenter_device_allocation" "assign_devices" {
 
   # Required to enable deployment
   system_attributes = {
-    deploy_mode = "undeploy"
+    deploy_mode = "deploy"
     name        = var.nodes[each.key].label
     hostname    = var.nodes[each.key].hostname
   }
