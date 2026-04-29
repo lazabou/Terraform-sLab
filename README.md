@@ -175,19 +175,19 @@ generic_systems = [
 
 ### ERB lab (`config-erb.tfvars`)
 
-| VRF | VLAN | Subnet | Gateway | Default Route Next-Hop | Bound to |
-|-----|------|--------|---------|------------------------|----------|
-| Blue_VRF | 100 | 10.0.100.0/24 | 10.0.100.1 | 10.0.10.254 (FW) | Leaf1 |
-| Red_VRF  | 200 | 10.0.200.0/24 | 10.0.200.1 | 10.0.20.254 (FW) | Leaf1 |
-| Blue_VRF | 10  | 10.0.10.0/24  | 10.0.10.1  | 10.0.10.254 (FW) | Border1 |
-| Red_VRF  | 20  | 10.0.20.0/24  | 10.0.20.1  | 10.0.20.254 (FW) | Border1 |
+| VRF | VLAN | Subnet | Gateway | Default Route Next-Hop | Bound to | GS |
+|-----|------|--------|---------|------------------------|----------|----|
+| Blue_VRF | 100 | 10.0.100.0/24 | 10.0.100.1 | 10.0.10.254 (FW) | Leaf1 | Server14, Server10 |
+| Red_VRF  | 200 | 10.0.200.0/24 | 10.0.200.1 | 10.0.20.254 (FW) | Leaf1 | Server14, Server10 |
+| Blue_VRF | 10  | 10.0.10.0/24  | 10.0.10.1  | 10.0.10.254 (FW) | Border1 | FW |
+| Red_VRF  | 20  | 10.0.20.0/24  | 10.0.20.1  | 10.0.20.254 (FW) | Border1 | FW |
 
 ### BO lab (`config-bo.tfvars`)
 
-| VRF | VLAN | Subnet | Gateway | Default Route | Bound to |
-|-----|------|--------|---------|---------------|----------|
-| BO | 100 | — | — | — | Leaf1, Border1 |
-| BO | 200 | — | — | — | Leaf1, Border1 |
+| VRF | VLAN | Subnet | Gateway | Default Route | Bound to | GS |
+|-----|------|--------|---------|---------------|----------|----|
+| BO | 100 | — | — | — | Leaf1, Border1 | Server14, Server10, FW |
+| BO | 200 | — | — | — | Leaf1, Border1 | Server14, Server10, FW |
 
 ## Security
 
