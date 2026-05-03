@@ -130,7 +130,7 @@ resource "apstra_configlet" "gbp" {
                                 }
                             }
                         }
-                        then gbp-tag 6666;
+                        then gbp-tag {{quarantine_tag}};
                     }
         {% for term in gbp_ip_terms %}
                     term {{term.tag}} {

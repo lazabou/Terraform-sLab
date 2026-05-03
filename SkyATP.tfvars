@@ -137,6 +137,7 @@ gbp_policy_set = {
 }
 
 gbp_classification_set = {
+  quarantine_tag = "6666"
   quarantine_ips = ["10.0.200.101"]
   gbp_ip_terms = [
     { subnet = "10.0.100.0/24", tag = "100" },
