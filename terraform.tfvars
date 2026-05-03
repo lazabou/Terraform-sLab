@@ -1,4 +1,4 @@
-blueprint_name = "Terraform-pod1"
+blueprint_name = "Demo-DC"
 
 nodes = {
   Spine1  = { label = "Spine1",  hostname = "Spine1"  }
