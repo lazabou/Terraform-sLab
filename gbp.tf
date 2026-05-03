@@ -2,29 +2,50 @@
 #  GBP — Variables     #
 ########################
 
-variable "gbp_property_set" {
-  description = "GBP policy matrix (gbp_policy) and quarantine IPs (quarantine_ips). Set to null to skip GBP deployment."
+variable "gbp_policy_set" {
+  description = "GBP inter-tag policy matrix. Set to null to skip GBP deployment."
+  type        = any
+  default     = null
+}
+
+variable "gbp_classification_set" {
+  description = "GBP IP classification: quarantine IPs and per-subnet tag terms."
   type        = any
   default     = null
 }
 
 ########################
-#  GBP Property Set    #
+#  GBP Property Sets   #
 ########################
 
-resource "apstra_property_set" "gbp" {
-  count = var.gbp_property_set != null ? 1 : 0
-  name  = "GBP"
-  data  = jsonencode(var.gbp_property_set)
+resource "apstra_property_set" "gbp_policy" {
+  count = var.gbp_policy_set != null ? 1 : 0
+  name  = "GBP-Policy"
+  data  = jsonencode(var.gbp_policy_set)
 }
 
-resource "apstra_datacenter_property_set" "gbp" {
-  count             = var.gbp_property_set != null ? 1 : 0
+resource "apstra_datacenter_property_set" "gbp_policy" {
+  count             = var.gbp_policy_set != null ? 1 : 0
   blueprint_id      = apstra_datacenter_blueprint.terraform-pod1.id
-  id                = apstra_property_set.gbp[0].id
+  id                = apstra_property_set.gbp_policy[0].id
   sync_with_catalog = true
 
-  depends_on = [apstra_property_set.gbp]
+  depends_on = [apstra_property_set.gbp_policy]
+}
+
+resource "apstra_property_set" "gbp_classification" {
+  count = var.gbp_classification_set != null ? 1 : 0
+  name  = "GBP-Classification"
+  data  = jsonencode(var.gbp_classification_set)
+}
+
+resource "apstra_datacenter_property_set" "gbp_classification" {
+  count             = var.gbp_classification_set != null ? 1 : 0
+  blueprint_id      = apstra_datacenter_blueprint.terraform-pod1.id
+  id                = apstra_property_set.gbp_classification[0].id
+  sync_with_catalog = true
+
+  depends_on = [apstra_property_set.gbp_classification]
 }
 
 ########################
@@ -32,7 +53,7 @@ resource "apstra_datacenter_property_set" "gbp" {
 ########################
 
 resource "apstra_configlet" "gbp" {
-  count = var.gbp_property_set != null ? 1 : 0
+  count = (var.gbp_policy_set != null && var.gbp_classification_set != null) ? 1 : 0
   name  = "GBP"
 
   generators = [
@@ -138,7 +159,7 @@ resource "apstra_configlet" "gbp" {
 ########################
 
 resource "apstra_datacenter_configlet" "gbp" {
-  count                = var.gbp_property_set != null ? 1 : 0
+  count                = (var.gbp_policy_set != null && var.gbp_classification_set != null) ? 1 : 0
   blueprint_id         = apstra_datacenter_blueprint.terraform-pod1.id
   catalog_configlet_id = apstra_configlet.gbp[0].id
   condition            = "label in ['Leaf1', 'Leaf2']"
@@ -146,6 +167,7 @@ resource "apstra_datacenter_configlet" "gbp" {
 
   depends_on = [
     apstra_configlet.gbp,
-    apstra_datacenter_property_set.gbp,
+    apstra_datacenter_property_set.gbp_policy,
+    apstra_datacenter_property_set.gbp_classification,
   ]
 }

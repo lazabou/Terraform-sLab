@@ -159,9 +159,10 @@ resource "apstra_blueprint_deployment" "deploy" {
     # Device allocation must be complete before deployment
     apstra_datacenter_device_allocation.assign_devices,
 
-    # GBP configlet and property set
+    # GBP configlet and property sets
     apstra_datacenter_configlet.gbp,
-    apstra_datacenter_property_set.gbp,
+    apstra_datacenter_property_set.gbp_policy,
+    apstra_datacenter_property_set.gbp_classification,
   ]
 
   comment = "Deployed by Terraform {{.TerraformVersion}}, Apstra provider {{.ProviderVersion}}, user $USER."
