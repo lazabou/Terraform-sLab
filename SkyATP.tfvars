@@ -135,4 +135,8 @@ gbp_property_set = {
     },
   ]
   quarantine_ips = ["10.0.200.101"]
+  gbp_ip_terms = [
+    { tag = "100", subnet = "10.0.100.0/24" },
+    { tag = "200", subnet = "10.0.200.0/24" },
+  ]
 }

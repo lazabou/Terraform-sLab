@@ -89,60 +89,9 @@ resource "apstra_configlet" "gbp" {
             }
         }
 
-        {# ─── GBP-TAG-VLAN: assign GBP tag based on ingress interface + vlan ───
-           Two cases:
-             - LAG member (is_port_channel_member=true)  -> use part_of (ae)
-             - Standalone (is_port_channel_member=false) -> use intfName
-           Deduplication via data.seen prevents duplicate terms when
-           multiple physical members belong to the same ae.
-           All local variables use namespace() to avoid Apstra intercepting
-           standalone {% set %} as missing property set values.
-        ─────────────────────────────────────────────────────────────────── #}
-        {% set data = namespace(seen=[], current_key='') %}
-        firewall {
-            family any {
-                filter GBP-TAG-VLAN {
-                    micro-segmentation;
-        {% for if_name, if_param in interface.items() %}
-            {% for tag in if_param['tags'] %}
-                {% if tag.startswith('gbp_') %}
-                    {% if if_param['is_port_channel_member'] %}
-                        {# LAG member: use ae interface name from part_of #}
-                        {% set data.current_key = if_param['part_of'] ~ '-' ~ tag %}
-                        {% if data.current_key not in data.seen %}
-                            {% set data.seen = data.seen + [data.current_key] %}
-                    term TAG{{ tag | replace('gbp_', '') }}-{{if_param['part_of']}} {
-                        from {
-                            interface {{if_param['part_of']}}.0;
-                            vlan-id {{ tag | replace('gbp_', '') }};
-                        }
-                        then gbp-tag {{ tag | replace('gbp_', '') }};
-                    }
-                        {% endif %}
-                    {% else %}
-                        {# Standalone interface: use intfName directly #}
-                        {% set data.current_key = if_param['intfName'] ~ '-' ~ tag %}
-                        {% if data.current_key not in data.seen %}
-                            {% set data.seen = data.seen + [data.current_key] %}
-                    term TAG{{ tag | replace('gbp_', '') }}-{{if_param['intfName']}} {
-                        from {
-                            interface {{if_param['intfName']}}.0;
-                            vlan-id {{ tag | replace('gbp_', '') }};
-                        }
-                        then gbp-tag {{ tag | replace('gbp_', '') }};
-                    }
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-                }
-            }
-        }
-
-        {# ─── GBP-TAG-IP: assign tag 6666 to quarantined IPs ───
-           Separate filter required by Junos: IP-based and VLAN-based
-           GBP tag assignment cannot coexist in the same filter.
+        {# ─── GBP-TAG-IP: assign GBP tag based on source IP ───
+           - QUARANTINE term: tag 6666 for quarantined IPs
+           - One term per gbp_ip_term entry: tag based on subnet membership
         ─────────────────────────────────────────────────────────────────── #}
         firewall {
             family any {
@@ -162,6 +111,20 @@ resource "apstra_configlet" "gbp" {
                         }
                         then gbp-tag 6666;
                     }
+        {% for term in gbp_ip_terms %}
+                    term {{term.tag}} {
+                        from {
+                            ip-version {
+                                ipv4 {
+                                    address {
+                                        {{term.subnet}};
+                                    }
+                                }
+                            }
+                        }
+                        then gbp-tag {{term.tag}};
+                    }
+        {% endfor %}
                 }
             }
         }
@@ -178,7 +141,7 @@ resource "apstra_datacenter_configlet" "gbp" {
   count                = var.gbp_property_set != null ? 1 : 0
   blueprint_id         = apstra_datacenter_blueprint.terraform-pod1.id
   catalog_configlet_id = apstra_configlet.gbp[0].id
-  condition            = "role in ['leaf', 'border_leaf']"
+  condition            = "label in ['Leaf1', 'Leaf2']"
   name                 = "GBP"
 
   depends_on = [

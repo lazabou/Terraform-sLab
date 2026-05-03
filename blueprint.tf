@@ -157,7 +157,11 @@ resource "apstra_blueprint_deployment" "deploy" {
     apstra_datacenter_connectivity_template_assignments.assign_default_route,
 
     # Device allocation must be complete before deployment
-    apstra_datacenter_device_allocation.assign_devices
+    apstra_datacenter_device_allocation.assign_devices,
+
+    # GBP configlet and property set
+    apstra_datacenter_configlet.gbp,
+    apstra_datacenter_property_set.gbp,
   ]
 
   comment = "Deployed by Terraform {{.TerraformVersion}}, Apstra provider {{.ProviderVersion}}, user $USER."
