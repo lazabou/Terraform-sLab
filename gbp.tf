@@ -75,6 +75,12 @@ resource "apstra_configlet" "gbp" {
                 }
             }
         }
+        chassis {
+            forwarding-options {
+                vxlan-gbp-profile;
+            }
+        }
+
 
         {# ─── MSEG: inter-tag traffic policy (src/dst tag enforcement) ───
            gbp_policy is a list of dicts, not a dict directly.
@@ -99,7 +105,6 @@ resource "apstra_configlet" "gbp" {
                         }
                         then {
                             {{action}};
-                            count {{src_tag}}-To{{dst_tag}};
                         }
                     }
                     {% endfor %}
@@ -118,20 +123,22 @@ resource "apstra_configlet" "gbp" {
             family any {
                 filter GBP-TAG-IP {
                     micro-segmentation;
+        {% if quarantine_ips %}
                     term QUARANTINE {
                         from {
                             ip-version {
                                 ipv4 {
                                     address {
-        {% for ip in quarantine_ips %}
+            {% for ip in quarantine_ips %}
                                         {{ip}}/32;
-        {% endfor %}
+            {% endfor %}
                                     }
                                 }
                             }
                         }
                         then gbp-tag {{quarantine_tag}};
                     }
+        {% endif %}
         {% for term in gbp_ip_terms %}
                     term {{term.tag}} {
                         from {
@@ -163,7 +170,7 @@ resource "apstra_datacenter_configlet" "gbp" {
   blueprint_id         = apstra_datacenter_blueprint.terraform-pod1.id
   catalog_configlet_id = apstra_configlet.gbp[0].id
   condition            = "label in ['Leaf1', 'Leaf2']"
-  name                 = "GBP"
+  name                 = "GBP-2"
 
   depends_on = [
     apstra_configlet.gbp,
